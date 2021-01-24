@@ -3,7 +3,7 @@
     <div class="loading" v-if="loading">Loading...</div>
     <div v-else>
       <div class="survey">
-        <h1>{{ survey.name }}</h1>
+        <h1>{{ surveyName }}</h1>
         <Node/>
       </div>
     </div>
@@ -19,14 +19,13 @@ export default {
   components: { Node },
   data() {
     return {
-      sharedState: this.$store.state,
       loading: false,
       surveyEndpoint: 'https://zt-eng.s3.us-east-1.amazonaws.com/fe-challenge/survey.json',
     }
   },
   computed: {
     ...Vuex.mapState({
-      survey: state => state.survey,
+      surveyName: state => state.survey.name,
     }),
   },
   methods: {
