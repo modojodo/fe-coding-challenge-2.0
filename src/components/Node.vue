@@ -1,7 +1,7 @@
 <template>
   <div class="pane">
-    <h3 class="nodeTitle">{{ this.node.page_title }}</h3>
-    <div class="nodeContent" v-html="this.node.content"></div>
+    <h3 class="nodeTitle">{{ node.page_title }}</h3>
+    <div class="nodeContent" v-html="node.content"></div>
     <div class="question-panel">
       <div v-if="buttons.length" class="content-answer">
         <ul class="answers">
@@ -15,27 +15,22 @@
 </template>
 
 <script>
-import store from '../store'
+import Vuex from 'vuex'
 
 export default {
   name: "Node",
   data() {
-    return {
-      store: store,
-      sharedState: store.state
-    }
+    return {};
   },
   computed: {
+    ...Vuex.mapGetters({
+      node: 'activeNode'
+    }),
     buttons() {
       return this.node.buttons || []
     },
-    node() {
-      return this.sharedState.survey.nodes[this.sharedState.activeNodeId] || {}
-    }
   },
-  methods: {
-
-  }
+  methods: {}
 }
 </script>
 
@@ -74,10 +69,10 @@ a.btn .col-2 {
 }
 
 .nodeQuestion {
-    background: azure;
-    font-weight: bold;
-    font-style: italic;
-    padding: 10px;
-    margin-top: 20px;
+  background: azure;
+  font-weight: bold;
+  font-style: italic;
+  padding: 10px;
+  margin-top: 20px;
 }
 </style>
