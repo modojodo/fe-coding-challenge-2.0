@@ -3,8 +3,6 @@
 </template>
 
 <script>
-import Vuex from 'vuex';
-
 export default {
   name: "SurveyButton",
   props: {
@@ -13,14 +11,10 @@ export default {
       required: true,
     },
   },
-  mounted() {
-    console.log(this.data)
-  },
   methods: {
-    ...Vuex.mapActions(['updateActiveNode']),
     handleClick() {
-      const { target_node_id } = this.data;
-      this.updateActiveNode(target_node_id);
+      const { data } = this;
+      this.$emit('next', data.target_node_id, data.value);
     }
   },
 }
