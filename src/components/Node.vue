@@ -59,15 +59,19 @@ export default {
   methods: {
     ...Vuex.mapActions(['updateVariables', 'updateActiveNode']),
     goToNext(targetId, value) {
+      // Store answer in the given variable
       if (this.node.variable) {
         this.updateVariables({ [this.node.variable]: value });
       }
+
+      // Set the node to next one
       this.updateActiveNode(targetId);
     },
     parseVariables(str) {
       Object.keys(this.variables).forEach((val) => {
-        if (str.indexOf(val) >= 0) {
-          str = str.replace(`#${val}#`, this.variables[val])
+        const variable = `#${val}#`;
+        while (str.indexOf(variable) >= 0) {
+          str = str.replace(variable, this.variables[val])
         }
       })
       return str;
