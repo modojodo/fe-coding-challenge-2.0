@@ -5,9 +5,15 @@ import Node from './components/Node.vue'
 Vue.use(VueRouter);
 
 const routes = [
-  { path: '/', component: Node },
+  {
+    name: 'survey-node',
+    path: '/survey/:node',
+    component: Node,
+  },
 ]
 
-const router = new VueRouter({ routes })
+const router = new VueRouter({
+  routes
+});
 
 export { router, routes }

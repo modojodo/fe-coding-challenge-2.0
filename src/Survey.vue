@@ -4,7 +4,7 @@
     <div v-else>
       <div class="survey">
         <h1>{{ surveyName }}</h1>
-        <Node/>
+        <router-view></router-view>
       </div>
     </div>
   </div>
@@ -12,11 +12,9 @@
 
 <script>
 import Vuex from 'vuex'
-import Node from './components/Node'
 
 export default {
   name: 'Survey',
-  components: { Node },
   data() {
     return {
       loading: false,
@@ -52,7 +50,10 @@ export default {
 
           // Update state with received data
           this.updateNodes(surveyData.nodes)
-              .then(() => this.toggleLoading());
+              .then(() => {
+                this.toggleLoading();
+                this.$router.push({ name: 'survey-node', params: { node: this.$store.state.activeNodeId } });
+              });
         });
   }
 }

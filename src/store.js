@@ -10,6 +10,7 @@ const store = new Vuex.Store({
     },
     activeNodeId: null,
     variables: {},
+    nodeHistory: [],
   },
   actions: {
     updateNodes({ commit }, newNodes) {
@@ -28,6 +29,7 @@ const store = new Vuex.Store({
     },
     updateActiveNode({ commit }, nodeNumber) {
       commit('UPDATE_ACTIVE_NODE', nodeNumber);
+      commit('UPDATE_NODE_HISTORY', nodeNumber);
     },
     updateVariables({ commit }, variable) {
       commit('UPDATE_VARIABLES', variable);
@@ -46,6 +48,9 @@ const store = new Vuex.Store({
         ...variable,
       })
     },
+    UPDATE_NODE_HISTORY(state, nodeNumber) {
+      state.nodeHistory.push(nodeNumber);
+    }
   },
   getters: {
     activeNode: state => state.activeNodeId ? state.survey.nodes[state.activeNodeId] : {},

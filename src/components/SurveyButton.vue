@@ -1,5 +1,5 @@
 <template>
-  <a class="btn btn-zingtree col-2" href="#" @click="handleClick">{{ data.button_text }}</a>
+  <a class="btn btn-zingtree col-2" @click="handleClick">{{ data.button_text }}</a>
 </template>
 
 <script>

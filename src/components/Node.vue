@@ -36,10 +36,14 @@ export default {
     };
   },
   computed: {
-    ...Vuex.mapGetters({
-      node: 'activeNode'
+    ...Vuex.mapState({
+      node(state) {
+        return state.survey.nodes ? state.survey.nodes[this.$route.params.node] : {};
+      },
+      activeNodeId: state => state.activeNodeId,
+      variables: state => state.variables,
+      nodeHistory: state => state.nodeHistory,
     }),
-    ...Vuex.mapState(['variables']),
     buttons() {
       return this.node.buttons || [];
     },
@@ -66,6 +70,7 @@ export default {
 
       // Set the node to next one
       this.updateActiveNode(targetId);
+      this.$router.push({ params: { node: this.activeNodeId } });
     },
     parseVariables(str) {
       Object.keys(this.variables).forEach((val) => {
@@ -75,6 +80,16 @@ export default {
         }
       })
       return str;
+    }
+  },
+  beforeRouteUpdate(to, from, next) {
+    // Guard against user entered nodes in the URL
+    const { params: { node } } = to;
+    if (node !== this.activeNodeId && !(this.nodeHistory.indexOf(node) >= 0)) {
+      this.$router.go(-1)
+      next();
+    } else {
+      next();
     }
   },
   mounted() {
