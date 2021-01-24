@@ -3,10 +3,17 @@
     <h3 class="nodeTitle">{{ node.page_title }}</h3>
     <div class="nodeContent" v-html="node.content"></div>
     <div class="question-panel">
+      <div v-if="fields.length" class="content-answer">
+        <ul class="answers">
+          <li v-for="(field, index) in fields" :key="index">
+            <Field :data="field"/>
+          </li>
+        </ul>
+      </div>
       <div v-if="buttons.length" class="content-answer">
         <ul class="answers">
           <li v-for="button in buttons" :key="button.id">
-            <survey-button :data="button"/>
+            <survey-button :data="button" @next="goToNext"/>
           </li>
         </ul>
       </div>
@@ -17,22 +24,33 @@
 <script>
 import Vuex from 'vuex'
 import SurveyButton from "@/components/SurveyButton";
+import Field from "@/components/Field";
 
 export default {
   name: "Node",
-  components: { SurveyButton },
+  components: { Field, SurveyButton },
   data() {
-    return {};
+    return {
+      fieldVal: null,
+      btnVal: null,
+    };
   },
   computed: {
     ...Vuex.mapGetters({
       node: 'activeNode'
     }),
     buttons() {
-      return this.node.buttons || []
+      return this.node.buttons || [];
+    },
+    fields() {
+      return this.node.formfields || [];
     },
   },
-  methods: {}
+  methods: {
+    goToNext() {
+      console.log('goToNext called')
+    }
+  }
 }
 </script>
 
