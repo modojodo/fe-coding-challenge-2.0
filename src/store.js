@@ -5,7 +5,9 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    survey: {},
+    survey: {
+      "name": "COVID-19 self checker",
+    },
     activeNodeId: null
   },
   actions: {

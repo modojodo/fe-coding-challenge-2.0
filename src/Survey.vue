@@ -4,14 +4,14 @@
     <div v-else>
       <div class="survey">
         <h1>{{ survey.name }}</h1>
-        <Node />
+        <Node/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import store from './store'
+import Vuex from 'vuex'
 import Node from './components/Node'
 
 export default {
@@ -19,14 +19,32 @@ export default {
   components: { Node },
   data() {
     return {
-      sharedState: store.state,
-      loading: false
+      sharedState: this.$store.state,
+      loading: false,
+      surveyEndpoint: 'https://zt-eng.s3.us-east-1.amazonaws.com/fe-challenge/survey.json',
     }
   },
   computed: {
-    survey() {
-      return this.sharedState.survey
-    },
+    ...Vuex.mapState({
+      survey: state => state.survey,
+    }),
+  },
+  methods: {
+    ...Vuex.mapActions(['updateNodes']),
+    toggleLoading() {
+      this.loading = !this.loading;
+    }
+  },
+  mounted() {
+    this.toggleLoading();
+    // Fire API Call to fetch data
+    fetch(this.surveyEndpoint)
+        .then(res => res.json())
+        .then((surveyData) => {
+          // Update state with received data
+          this.updateNodes(surveyData.nodes)
+              .then(() => this.toggleLoading());
+        });
   }
 }
 </script>
@@ -60,9 +78,9 @@ html, body {
   color: white;
 }
 
-@media screen and (max-device-width: 767px){
-    #app {
-        margin: 20px;
-    }
+@media screen and (max-device-width: 767px) {
+  #app {
+    margin: 20px;
+  }
 }
 </style>
