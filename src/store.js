@@ -16,6 +16,9 @@ const store = new Vuex.Store({
       commit('UPDATE_NODES', newNodes);
       // Set active node to 1 whenever data updates
       commit('UPDATE_ACTIVE_NODE', 1);
+    },
+    updateActiveNode({ commit }, nodeNumber) {
+      commit('UPDATE_ACTIVE_NODE', nodeNumber);
     }
   },
   mutations: {
