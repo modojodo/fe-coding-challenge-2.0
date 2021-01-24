@@ -32,6 +32,13 @@ export default {
     ...Vuex.mapActions(['updateNodes']),
     toggleLoading() {
       this.loading = !this.loading;
+    },
+    addStyles(url) {
+      const linkTag = document.createElement('link');
+      linkTag.type = "text/css";
+      linkTag.rel = "stylesheet";
+      linkTag.href = url
+      document.getElementsByTagName("head")[0].appendChild(linkTag);
     }
   },
   mounted() {
@@ -40,6 +47,9 @@ export default {
     fetch(this.surveyEndpoint)
         .then(res => res.json())
         .then((surveyData) => {
+          // Add styles received from the API
+          this.addStyles(surveyData.css_include);
+
           // Update state with received data
           this.updateNodes(surveyData.nodes)
               .then(() => this.toggleLoading());
