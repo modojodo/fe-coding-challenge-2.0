@@ -5,8 +5,8 @@
     <div class="question-panel">
       <div v-if="buttons.length" class="content-answer">
         <ul class="answers">
-          <li v-for="b in buttons" :key="b.id">
-            <a class="btn btn-zingtree col-2" href="#">{{ b.button_text }}</a>
+          <li v-for="button in buttons" :key="button.id">
+            <survey-button :data="button"/>
           </li>
         </ul>
       </div>
@@ -16,9 +16,11 @@
 
 <script>
 import Vuex from 'vuex'
+import SurveyButton from "@/components/SurveyButton";
 
 export default {
   name: "Node",
+  components: { SurveyButton },
   data() {
     return {};
   },
@@ -48,20 +50,6 @@ ul.answers {
 ul.answers li {
   padding: 0;
   margin: 10px 0;
-}
-
-a.btn {
-  display: flex;
-  padding: 10px 7px;
-  background: #0e5a38;
-  border-radius: 5px;
-  color: #fff;
-  text-decoration: none;
-  justify-content: center;
-}
-
-a.btn .col-2 {
-  width: 50%;
 }
 
 .nodeContent {
