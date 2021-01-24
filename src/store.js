@@ -9,29 +9,18 @@ const store = new Vuex.Store({
       "name": "COVID-19 self checker",
     },
     activeNodeId: null,
+    variables: {},
   },
   actions: {
     updateNodes({ commit }, newNodes) {
-      // Get list of all variables
-      const variables = [];
+      // Get list of all variables, initialize them into the state for Vuex reactivity to kick in
+      const variables = {};
       for (const [, val] of Object.entries(newNodes)) {
         if (val.variable) {
-          variables.push(val.variable);
+          variables[val.variable] = null;
         }
       }
-      // Replace variables with Vue interpolation
-      for (const [key, val] of Object.entries(newNodes)) {
-        variables.forEach(variable => {
-          if (val.content && val.content.includes(variable)) {
-            newNodes[key].content = val.content.replace(`#${variable}#`, `{{${variable}}}`)
-          }
-
-          if (val.page_title && val.page_title.includes(variable)) {
-            newNodes[key].page_title = val.page_title.replace(`#${variable}#`, `{{${variable}}}`)
-          }
-        });
-      }
-
+      commit('UPDATE_VARIABLES', variables);
       // Update nodes with new data from the API
       commit('UPDATE_NODES', newNodes);
       // Set active node to 1 whenever data updates
@@ -39,6 +28,9 @@ const store = new Vuex.Store({
     },
     updateActiveNode({ commit }, nodeNumber) {
       commit('UPDATE_ACTIVE_NODE', nodeNumber);
+    },
+    updateVariables({ commit }, variable) {
+      commit('UPDATE_VARIABLES', variable);
     }
   },
   mutations: {
@@ -47,7 +39,13 @@ const store = new Vuex.Store({
     },
     UPDATE_ACTIVE_NODE(state, nodeNumber) {
       state.activeNodeId = nodeNumber;
-    }
+    },
+    UPDATE_VARIABLES(state, variable) {
+      Vue.set(state, 'variables', {
+        ...state.variables,
+        ...variable,
+      })
+    },
   },
   getters: {
     activeNode: state => state.activeNodeId ? state.survey.nodes[state.activeNodeId] : {},

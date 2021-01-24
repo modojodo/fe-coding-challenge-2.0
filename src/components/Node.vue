@@ -1,7 +1,7 @@
 <template>
   <div class="pane">
-    <h3 class="nodeTitle">{{ node.page_title }}</h3>
-    <div class="nodeContent" v-html="node.content"></div>
+    <h3 class="nodeTitle">{{ title }}</h3>
+    <div class="nodeContent" v-html="content"></div>
     <div class="question-panel">
       <div v-if="fields.length" class="content-answer">
         <ul class="answers">
@@ -39,18 +39,45 @@ export default {
     ...Vuex.mapGetters({
       node: 'activeNode'
     }),
+    ...Vuex.mapState(['variables']),
     buttons() {
       return this.node.buttons || [];
     },
     fields() {
       return this.node.formfields || [];
     },
+    title() {
+      const { node, parseVariables } = this;
+      return node.page_title ? parseVariables(node.page_title) : '';
+    },
+    content() {
+      const { node, parseVariables } = this;
+      return node.content ? parseVariables(node.content) : '';
+    },
+
   },
   methods: {
-    goToNext() {
-      console.log('goToNext called')
+    ...Vuex.mapActions(['updateVariables', 'updateActiveNode']),
+    goToNext(targetId, value) {
+      if (this.node.variable) {
+        this.updateVariables({ [this.node.variable]: value });
+      }
+      this.updateActiveNode(targetId);
+    },
+    parseVariables(str) {
+      Object.keys(this.variables).forEach((val) => {
+        if (str.indexOf(val) >= 0) {
+          str = str.replace(`#${val}#`, this.variables[val])
+        }
+      })
+      return str;
     }
-  }
+  },
+  mounted() {
+    if (this.node.conditions) {
+      // TODO
+    }
+  },
 }
 </script>
 
