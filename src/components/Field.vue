@@ -2,7 +2,7 @@
   <div>
     <label :for="data.name">{{ data.label }}</label>
     <input v-if="!isDropdown" :type="data.type" :value="data.value" :id="data.name" :name="data.name"
-           :bind="selectedValue">
+           :bind="selectedValue" @click="onCheckboxUpdate" :checked="data.checked">
     <select v-else-if="isDropdown" :name="data.name" :id="data.name" :bind="selectedValue">
       <option :value="option" v-for="(option, index) in options" :key="index">{{ option }}</option>
     </select>
@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import Vuex from "vuex";
+
 export default {
   name: "Field",
   data() {
@@ -38,6 +40,16 @@ export default {
       return [];
     }
   },
+  methods: {
+    ...Vuex.mapActions(['updateCheckbox']),
+    onCheckboxUpdate(event) {
+      this.updateCheckbox({
+        name: this.data.name,
+        isChecked: event.target.checked,
+        nodeId: this.$route.params.node
+      });
+    }
+  }
 }
 </script>
 

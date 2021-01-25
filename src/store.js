@@ -33,6 +33,9 @@ const store = new Vuex.Store({
     },
     updateVariables({ commit }, variable) {
       commit('UPDATE_VARIABLES', variable);
+    },
+    updateCheckbox({ commit }, payload) {
+      commit('UPDATE_Field_VALUE', payload);
     }
   },
   mutations: {
@@ -50,6 +53,10 @@ const store = new Vuex.Store({
     },
     UPDATE_NODE_HISTORY(state, nodeNumber) {
       state.nodeHistory.push(nodeNumber);
+    },
+    UPDATE_Field_VALUE(state, { name, isChecked, nodeId }) {
+      state.survey.nodes[nodeId].formfields.find(field => field.name === name).checked = isChecked;
+      console.log(state.survey.nodes[nodeId])
     }
   },
   getters: {
