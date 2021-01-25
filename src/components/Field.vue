@@ -2,8 +2,8 @@
   <div>
     <label :for="data.name">{{ data.label }}</label>
     <input v-if="!isDropdown" :type="data.type" :value="data.value" :id="data.name" :name="data.name"
-           :bind="selectedValue" @click="onCheckboxUpdate" :checked="data.checked">
-    <select v-else-if="isDropdown" :name="data.name" :id="data.name" :bind="selectedValue">
+           @click="onCheckboxUpdate" :checked="data.checked">
+    <select v-else-if="isDropdown" :name="data.name" :id="data.name" v-model="selectedValue" @change="onSelect">
       <option :value="option" v-for="(option, index) in options" :key="index">{{ option }}</option>
     </select>
   </div>
@@ -23,6 +23,10 @@ export default {
     data: {
       type: Object,
       required: true,
+    },
+    selected: {
+      type: String,
+      required: false,
     }
   },
   computed: {
@@ -43,13 +47,22 @@ export default {
   methods: {
     ...Vuex.mapActions(['updateCheckbox']),
     onCheckboxUpdate(event) {
+      // Update the global state with checkbox's state, this would be sued for navigation to fill out data
       this.updateCheckbox({
         name: this.data.name,
         isChecked: event.target.checked,
         nodeId: this.$route.params.node
       });
+    },
+    onSelect() {
+      // When select's value changes, emit event so parent can update variables in store
+      this.$emit('update', this.selectedValue);
     }
+  },
+  mounted() {
+    this.selectedValue = this.selected;
   }
+
 }
 </script>
 

@@ -6,7 +6,7 @@
       <div v-if="fields.length" class="content-answer">
         <ul class="answers">
           <li v-for="(field, index) in fields" :key="index">
-            <Field :data="field"/>
+            <Field :data="field" @update="updateFieldVal" :selected="variableValue"/>
           </li>
         </ul>
       </div>
@@ -32,7 +32,6 @@ export default {
   data() {
     return {
       fieldVal: null,
-      btnVal: null,
     };
   },
   computed: {
@@ -43,6 +42,12 @@ export default {
       activeNodeId: state => state.activeNodeId,
       variables: state => state.variables,
       nodeHistory: state => state.nodeHistory,
+      hasVariable() {
+        return this.node && this.node.variable
+      },
+      variableValue(state) {
+        return this.hasVariable ? state.variables[this.node.variable] : null;
+      },
     }),
     buttons() {
       return this.node.buttons || [];
@@ -64,9 +69,7 @@ export default {
     ...Vuex.mapActions(['updateVariables', 'updateActiveNode']),
     goToNext(targetId, value) {
       // Store answer in the given variable
-      if (this.node.variable) {
-        this.updateVariables({ [this.node.variable]: value });
-      }
+      this.updateStoreVariables(value);
 
       // Set the node to next one
       this.updateActiveNode(targetId);
@@ -80,6 +83,17 @@ export default {
         }
       })
       return str;
+    },
+    updateFieldVal(val) {
+      this.fieldVal = val;
+    },
+    updateStoreVariables(value) {
+      // Decide whether to update variable with field or button value
+      const { node, updateVariables, fieldVal, hasVariable } = this;
+      if (hasVariable) {
+        const variableValue = fieldVal || value;
+        updateVariables({ [node.variable]: variableValue });
+      }
     }
   },
   beforeRouteUpdate(to, from, next) {
@@ -95,6 +109,7 @@ export default {
   mounted() {
     if (this.node.conditions) {
       // TODO
+
     }
   },
 }
