@@ -2,15 +2,19 @@ import Vuex from 'vuex';
 import Vue from "vue";
 
 Vue.use(Vuex);
+const initialState = {
+  survey: {
+    "name": "COVID-19 self checker",
+  },
+  activeNodeId: null,
+  variables: {},
+  nodeHistory: [],
+};
+
 
 const store = new Vuex.Store({
   state: {
-    survey: {
-      "name": "COVID-19 self checker",
-    },
-    activeNodeId: null,
-    variables: {},
-    nodeHistory: [],
+    ...initialState,
   },
   actions: {
     updateNodes({ commit }, newNodes) {
@@ -36,6 +40,9 @@ const store = new Vuex.Store({
     },
     updateCheckbox({ commit }, payload) {
       commit('UPDATE_Field_VALUE', payload);
+    },
+    reset({ commit }) {
+      commit('RESET_STATE');
     }
   },
   mutations: {
@@ -56,6 +63,9 @@ const store = new Vuex.Store({
     },
     UPDATE_Field_VALUE(state, { name, isChecked, nodeId }) {
       state.survey.nodes[nodeId].formfields.find(field => field.name === name).checked = isChecked;
+    },
+    RESET_STATE(state) {
+      Vue.set(state, '', initialState);
     }
   },
   getters: {

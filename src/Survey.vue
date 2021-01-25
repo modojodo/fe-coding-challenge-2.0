@@ -27,7 +27,7 @@ export default {
     }),
   },
   methods: {
-    ...Vuex.mapActions(['updateNodes']),
+    ...Vuex.mapActions(['updateNodes', 'reset']),
     toggleLoading() {
       this.loading = !this.loading;
     },
@@ -40,6 +40,7 @@ export default {
     }
   },
   mounted() {
+    this.reset();
     this.toggleLoading();
     // Fire API Call to fetch data
     fetch(this.surveyEndpoint)
