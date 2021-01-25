@@ -48,6 +48,7 @@ export default {
       variableValue(state) {
         return this.hasVariable ? state.variables[this.node.variable] : null;
       },
+      allNodes: state => state.survey.nodes,
     }),
     buttons() {
       return this.node.buttons || [];
@@ -72,7 +73,11 @@ export default {
       this.updateStoreVariables(value);
 
       // Set the node to next one
-      this.updateActiveNode(targetId);
+      this.nextNode(targetId)
+    },
+    nextNode(id) {
+      // Set the node & update route
+      this.updateActiveNode(id);
       this.$router.push({ params: { node: this.activeNodeId } });
     },
     parseVariables(str) {
@@ -94,7 +99,40 @@ export default {
         const variableValue = fieldVal || value;
         updateVariables({ [node.variable]: variableValue });
       }
-    }
+    },
+    handleConditions() {
+      const { node, nodeHistory, allNodes, nextNode } = this;
+      let isConditionMet = false;
+      let targetId = 0;
+      if (node.conditions) {
+        // TODO
+        // Go through each condition to decide the path forward
+        for (let i = 0; i < node.conditions.length; i++) {
+          const { operator, target_node_id } = node.conditions[i];
+          switch (operator) {
+            case "eq": {
+              const sourceNode = nodeHistory[nodeHistory.length - 2];
+              const isMatched = allNodes[sourceNode].formfields.some(field => field.name === node.conditions[i].variable && field.checked);
+              if (isMatched) {
+                isConditionMet = true;
+                targetId = target_node_id;
+              }
+              break;
+            }
+            case "default": {
+              isConditionMet = true;
+              targetId = target_node_id;
+            }
+          }
+          if (isConditionMet) {
+            break;
+          }
+        }
+        if (targetId) {
+          nextNode(targetId)
+        }
+      }
+    },
   },
   beforeRouteUpdate(to, from, next) {
     // Guard against user entered nodes in the URL
@@ -106,12 +144,11 @@ export default {
       next();
     }
   },
-  mounted() {
-    if (this.node.conditions) {
-      // TODO
-
+  watch: {
+    '$route.params.node': function () {
+      this.handleConditions()
     }
-  },
+  }
 }
 </script>
 
