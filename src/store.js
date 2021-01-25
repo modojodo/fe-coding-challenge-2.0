@@ -49,14 +49,13 @@ const store = new Vuex.Store({
       Vue.set(state, 'variables', {
         ...state.variables,
         ...variable,
-      })
+      });
     },
     UPDATE_NODE_HISTORY(state, nodeNumber) {
       state.nodeHistory.push(nodeNumber);
     },
     UPDATE_Field_VALUE(state, { name, isChecked, nodeId }) {
       state.survey.nodes[nodeId].formfields.find(field => field.name === name).checked = isChecked;
-      console.log(state.survey.nodes[nodeId])
     }
   },
   getters: {
